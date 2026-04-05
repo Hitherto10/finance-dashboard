@@ -76,7 +76,7 @@ function TransactionModal({ existing, onSave, onClose }) {
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 "
             onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
-            <div className="fin-card rounded-2xl p-6 w-full max-w-md shadow-2xl">
+            <div className="fin-card rounded-2xl p-6 w-full max-w-md shadow-2xl mx-4">
                 <div className="flex items-center justify-between mb-5">
                     <h2 className="text-lg font-bold">{existing ? "Edit Transaction" : "Add Transaction"}</h2>
                     <button onClick={onClose} className="p-1 rounded-lg hover:bg-black/10 transition-colors fin-muted">
@@ -232,9 +232,8 @@ export function TransactionsPage() {
 
             {/* Controls card */}
             <div className="fin-card rounded-2xl p-4">
-                <div className="flex flex-wrap items-center gap-3">
-                    {/* Search */}
-                    <div className="relative flex-1 min-w-48">
+                <div className="flex flex-col md:flex-row md:flex-wrap items-center gap-3 w-full">
+                    <div className="relative w-full md:flex-1 md:min-w-48">
                         <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 fin-muted pointer-events-none" />
                         <input
                             type="text"
@@ -246,8 +245,9 @@ export function TransactionsPage() {
                     </div>
 
                     {/* Type filter */}
-                    <select
-                        value={filterType}
+                    <div className="flex gap-3 w-full md:w-auto">
+                        <select
+                            value={filterType}
                         onChange={e => setFilterType(e.target.value)}
                         className="px-3 py-2 text-sm rounded-lg border fin-border fin-card focus:outline-none focus:ring-1 focus:ring-emerald-500/50 transition-all fin-muted capitalize">
                         <option value="all">All Types</option>
@@ -256,20 +256,20 @@ export function TransactionsPage() {
                         ))}
                     </select>
 
-                    {/* Category filter */}
-                    <select
-                        value={filterCategory}
-                        onChange={e => setFilterCategory(e.target.value)}
-                        className="px-3 py-2 text-sm rounded-lg border fin-border fin-card focus:outline-none focus:ring-1 focus:ring-emerald-500/50 transition-all fin-muted">
-                        <option value="all">All Categories</option>
-                        {fin_categories.map(c => <option key={c} value={c}>{c}</option>)}
-                    </select>
+                        <select
+                            value={filterCategory}
+                            onChange={e => setFilterCategory(e.target.value)}
+                            className="flex-1 px-3 py-2 text-sm rounded-lg border fin-border fin-card focus:outline-none focus:ring-1 focus:ring-emerald-500/50 transition-all fin-muted">
+                            <option value="all">All Categories</option>
+                            {fin_categories.map(c => <option key={c} value={c}>{c}</option>)}
+                        </select>
+                    </div>
 
                     {/* Admin: Add button */}
                     {isAdmin && (
                         <button
                             onClick={() => setModal({ mode: "add" })}
-                            className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-emerald-500 hover:bg-emerald-400 text-white transition-colors ml-auto">
+                            className="w-full md:w-auto flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-emerald-500 hover:bg-emerald-400 text-white transition-colors md:ml-auto">
                             <Plus size={15} />
                             Add Transaction
                         </button>
@@ -283,8 +283,8 @@ export function TransactionsPage() {
                 </p>
             </div>
 
-            {/* Table */}
-            <div className="fin-card rounded-2xl overflow-hidden">
+            {/* Desktop Table View */}
+            <div className="hidden md:block fin-card rounded-2xl overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                         <thead>
@@ -358,6 +358,48 @@ export function TransactionsPage() {
                         </tbody>
                     </table>
                 </div>
+            </div>
+
+            {/* Mobile Card View */}
+            <div className="md:hidden flex flex-col gap-3">
+                {visible.length === 0 ? (
+                    <div className="fin-card rounded-xl p-8 text-center fin-muted text-sm border fin-border">
+                        No transactions match your filters.
+                    </div>
+                ) : visible.map((txn) => {
+                    const isIncome = txn.type === "income";
+                    return (
+                        <div key={txn.id} className="fin-card rounded-xl p-4 border fin-border flex flex-col gap-3 hover:bg-white/5 transition-colors">
+                            <div className="flex justify-between items-start gap-3">
+                                <div className="flex-1 min-w-0">
+                                    <p className="font-semibold text-sm leading-snug truncate">{txn.description}</p>
+                                    <div className="flex items-center gap-2 mt-1 flex-wrap">
+                                        <span className="fin-muted font-mono text-[10px]">{dateFormatter(txn.date)}</span>
+                                    </div>
+                                    {txn.note && <p className="text-xs fin-muted mt-1.5 opacity-80">{txn.note}</p>}
+                                </div>
+                                <div className={`font-bold tabular-nums text-sm text-right ${isIncome ? "text-emerald-400" : "text-red-400"}`}>
+                                    {amountFormatter(txn.amount)}
+                                </div>
+                            </div>
+                            
+                            <div className="flex items-center justify-between pt-2 border-t fin-border/50">
+                                <div className="flex items-center gap-2">
+                                    <CategoryBadge category={txn.category} />
+                                    <TypeBadge type={txn.type} />
+                                </div>
+                                {isAdmin && (
+                                    <button
+                                        onClick={() => setModal({ mode: "edit", txn })}
+                                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold fin-muted border fin-border hover:border-emerald-500/40 hover:text-emerald-400 transition-all">
+                                        <Pencil size={12} />
+                                        Edit
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+                    );
+                })}
             </div>
 
             {/* Modal */}

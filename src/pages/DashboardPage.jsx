@@ -128,7 +128,7 @@ export function DashboardPage() {
                     <p className="text-lg font-semibold">Summary</p>
                     <p className="text-xs font-semibold text-red-400">Data might not add up when calculated (fake MOCK data)</p>
                 </div>
-                <div className="flex flex-wrap">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     {overview.map(stat => (
                         <StatCard key={stat.label} {...stat} />
                     ))}
@@ -136,7 +136,7 @@ export function DashboardPage() {
             </div>
 
             {/* Charts Section */}
-            <div className="grid md:grid-cols-2 grid-cols-1 gap-6 h-225 lg:h-130">
+            <div className="grid lg:grid-cols-2 grid-cols-1 gap-6 h-220 lg:h-130">
 
                 {/* Balance Trend */}
                 <div className="fin-card  rounded-2xl p-6 flex flex-col">
