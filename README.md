@@ -17,7 +17,7 @@ A finance dashboard website built with **React** and **Tailwind CSS**. It provid
    npm run dev
    ```
 4. **View the Application**
-   Open your browser and navigate to the local URL provided in the terminal (typically `http://localhost:5173`).
+   Open your browser and navigate to the local URL provided in the terminal.
 
 ## Overview of Approach
 
