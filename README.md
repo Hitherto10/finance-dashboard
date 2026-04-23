@@ -1,4 +1,4 @@
-# Zorvyn Finance Dashboard
+# Hitherto Finance Dashboard
 
 A finance dashboard website built with **React** and **Tailwind CSS**. It provides users with a graphic view of their financial health, transaction records, and expressionable insights.
 
